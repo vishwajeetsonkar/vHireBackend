@@ -39,7 +39,15 @@ exports.findAll = (req, res) => {
 
 // Find a single User with an id
 exports.findOne = (req, res) => {
-  
+  User.findOne({ where: { email: req.body.email } }).then(async function (user) {
+    if (!user) {
+        res.json({status: false, message: "user not found"});
+    } else if (!await user.validPassword(req.body.password)) {
+      res.json({status: false, message: "login failed"});
+    } else {
+      res.json({status: true, message: "success"});
+    }
+});
 };
 
 // Update a User by the id in the request
